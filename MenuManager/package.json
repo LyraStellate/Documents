@@ -4,11 +4,12 @@
     "description": "LyraStellate Documentation Portal",
     "type": "module",
     "scripts": {
-        "docs:dev": "vitepress dev",
-        "docs:build": "vitepress build",
-        "docs:preview": "vitepress preview"
+        "docs:dev": "vitepress dev docs",
+        "docs:build": "vitepress build docs",
+        "docs:preview": "vitepress preview docs"
     },
     "devDependencies": {
-        "vitepress": "^1.0.0"
+        "vitepress": "^1.6.4",
+        "vitepress-plugin-tabs": "^0.5.0"
     }
 }
