@@ -87,6 +87,4 @@ VRChatの仕様上、1つの階層に定義できるアイテムの最大数は8
    MenuLayoutData を読み取り、巨大な VRCExpressionsMenu の中の Control を取得。
    Order と ParentPath の定義通りに、上限を維持してフォルダを再構築する。
 
-4. クリーンアップ
-   MenuLayoutData コンポーネント自身を DestroyImmediate し、アバタービルド時に影響を及ぼさないよう痕跡を消去する。
 ```
