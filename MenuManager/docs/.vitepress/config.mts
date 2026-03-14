@@ -25,7 +25,14 @@ export default defineConfig({
                     { text: '概要', link: '/guide/' },
                     { text: '導入方法', link: '/guide/getting-started' },
                     { text: '基本的な使い方', link: '/guide/how-to-use' },
-                    { text: 'コンポーネント', link: '/guide/component' },
+                    {
+                        text: 'コンポーネント',
+                        collapsed: false,
+                        items: [
+                            { text: 'MenuLayoutData', link: '/guide/components/MenuLayoutData' },
+                            { text: 'MenuManagerItemProxy', link: '/guide/components/MenuManagerItemProxy' }
+                        ]
+                    },
                     { text: '詳細', link: '/guide/explanation' },
                     {
                         text: '技術仕様',

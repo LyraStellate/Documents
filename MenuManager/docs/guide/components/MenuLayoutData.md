@@ -1,8 +1,6 @@
-# コンポーネント
+# MenuLayoutData
 
-各コンポーネントの設定項目について
-
-## MenuLayoutData
+## 概要
 
 `MenuLayoutData` コンポーネントは、Menu Managerで編集したレイアウト情報を保持するためのコンポーネントです。アバターのルートオブジェクトに自動的にアタッチされます。
 

@@ -57,7 +57,7 @@ Unity上部のメニューバーから `Tools` > `Lyra Menu Manager` > `Menu Man
 :::
 
 ::: info 💾 保存の仕組み
-保存を実行すると、アバターのルート要素に [`MenuLayoutData`](/guide/component) コンポーネントがアタッチされ、そこにレイアウト情報が書き込まれます。
+保存を実行すると、アバターのルート要素に [`MenuLayoutData`](/guide/components/MenuLayoutData) コンポーネントがアタッチされ、そこにレイアウト情報が書き込まれます。
 :::
 
 ## Extended保存について
@@ -76,5 +76,5 @@ Unity上部のメニューバーから `Tools` > `Lyra Menu Manager` > `Menu Man
 
 ## 次のステップ
 
-- [コンポーネント](/guide/component) — 各コンポーネントの設定項目について
+- [コンポーネント](/guide/components/MenuLayoutData) — 各コンポーネントの設定項目について
 - [技術仕様: アーキテクチャ概要](/guide/technical-details/architecture) — 内部の仕組みを詳しく知りたい方へ

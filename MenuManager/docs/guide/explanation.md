@@ -13,6 +13,7 @@
 | 色 | 説明 |
 |------|------|
 | 白 | 通常のアイテム |
+| <span style="color: green; ">緑</span>  | [`MenuManagerItemProxy`](/guide/components/MenuManagerItemProxy)によって追加されたプロキシメニュー |
 | <span style="color: aqua; ">青</span> | 既にメニューデータがある状態で新規追加されたアイテム |
 | <span style="color: orange; ">黄</span> | 中身が空のサブフォルダー |
 | <span style="color: red; ">赤</span> | EditorOnlyになっているオブジェクトにアタッチされた`MA Menu Installer`または親のいずれかがEditorOnlyである。<br>この場合メニューに登録してもビルドされません。|
