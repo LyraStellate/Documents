@@ -16,52 +16,50 @@
 
 2. **Modular Avatar の仮想統合**
 
-`GetComponentsInChildren<ModularAvatarMenuInstaller>(true)` によってアバター内のどこかに配置されているMAの設計図をすべて拾い上げます。
+`GetComponentsInChildren<ModularAvatarMenuInstaller>(true)` によってアバター内に配置されているMAコンポーネントをすべて拾い上げます。
 
 3. **パスの合成**
 
 各インストーラーが持つ `installPath` プロパティ（例: `Props/Weapon/Sword`）を仮想のフォルダとしてメモリ上に合成し、元のメニューツリーにぶら下げます。
 
-```csharp
-// メモリ上にMenuNodeとして仮想化されたツリーの一部
-public class MenuNode {
-    public string Name;
-    public VRCExpressionsMenu.Control NativeControl; // VRC公式コントロール
-    public ModularAvatarMenuItem MAMenuItem; // MAのメニューアイテム
-    public string InstallPath; // 評価済みの階層パス
-    public List<MenuNode> Children = new List<MenuNode>();
-}
-```
+4. **追加コンポーネントの統合**
+
+- `MenuManagerItemProxy` — ビルド時に外部スクリプトが動的生成する `MAMenuItem` をエディター上に仮エントリとして表示します。ビルド時はプロキシの `parentFolderPath` / `controlType` を元に対象フォルダへ挿入されます。
+- `LilyCalInventory` — 対応コンポーネントを自動検出し、同様の仮想エントリとして統合します。
 
 ### レイアウトのシリアライズと保存
-エディターでメニューの編集を行い、保存ボタンを押すと、画面上のMenuNodeツリー構造がフラットな1次元の配列データへと変換され、アバター直下に配置される `MenuLayoutData` 内にシリアライズされて保存されます。
+エディターでメニューの編集を行い、保存ボタンを押すと、画面上のMenuNodeツリー構造がフラットな `ItemLayout` リストへと変換されます。
 
-- **階層パス**
+- **保存先** — アバタールートの `MenuLayoutData` コンポーネントが参照する `MenuLayoutDataAsset`（ScriptableObject）に保存されます。`BaseLayout`（全レイアウト）と `ExtendedLayout`（Baseとの差分、Pro版）の2アセット構成です。
+- **保存方式** — デリートインサート方式。対象アセットの `Items` を全削除後に最新データを再挿入することで、古い無効データの蓄積を防ぎます。
+- **階層パス** — 各要素の所属を、`Key`（GUID）を `/` で連結したパス文字列で表現します（`ParentPath`）。ルート直下なら空文字列、1階層目のサブメニュー内なら `<親Key>` のみになります。
+- **配置順序** — `Order` によってフォルダ内でのインデックスが振られます。
+- **インベントリ** — インベントリに退避したアイテムは `ParentPath` が `__INVENTORY__` で始まる特殊領域に保存されます。
+- **IDキー** — 各アイテムには以下の4段階のキーが付与され、マッチング時に優先順に参照されます。
 
-各要素がどこに所属しているかを `/` 区切りの文字列で表現し直します。
-- **配置順序**
-
-Orderによってフォルダ内でのインデックス値が振られます。
-- **インベントリへの一時退避**
-
-インベントリに置かれたアイテムは `ParentPath` が `__INVENTORY__` で始まる特殊領域へ割り当てられます。
-- **キー**
-
-同じ名前のアイテムを混同しないよう、`Control.Type : Control.Name : Parameter.Name : Control.Value` から一意の識別子を生成します。
+| 優先順 | フィールド | 内容 |
+|---|---|---|
+| 1 | `SourceObjId` | 元オブジェクトの `GlobalObjectId`。リネーム・移動後も不変 |
+| 2 | `Key` | アイテムごとの GUID（`PersistentId`） |
+| 3 | `Type` | `Type:Name:Param:Value` 形式の合成キー（後方互換フォールバック） |
+| 4 | `DisplayName` | 最終フォールバック |
 
 ### NDMFプラグインによるビルド時再構成
-`MenuManagerPlugin.cs` は、NDMFのアーキテクチャに依存しています。
+`MenuManagerPlugin.cs` は NDMFの `BuildPhase.Transforming` フェーズ、Modular Avatar の後に実行されます。
 
-Modular Avatar本体がすべてのアニメーションやメニューを結合して最終的な `VRCExpressionsMenu` を１つにまとめた後、NDMF処理一番最後のOptimizingフェーズでフックします。
 ```csharp
-// Modular Avatarなど他の主要プラグインのTransformingフェーズ後（Optimizing）に実行
-InPhase(BuildPhase.Optimizing).Run("Reorder Menus", ctx => { ... });
+InPhase(BuildPhase.Transforming)
+    .AfterPlugin("nadena.dev.modular-avatar")
+    .Run("Reorder Menus", ctx => { ... });
 ```
-ここで、`MenuLayoutData` の記述通りに、完成した巨大な `VRCExpressionsMenu` の中からコントロールをすべて抜き出し、`Order` 順にツリーにつなぎ合わせ直します。
+
+MAが生成した `VRCExpressionsMenu` から全コントロールをプールとして抽出し、上記IDキー優先順でマッチングを行い `Order` / `ParentPath` の定義通りに再配置します。`MenuManagerItemProxy` および `LilyCalInventory` 由来のアイテムも同一パイプラインで処理されます。
+
+実行順序はSettingsウィンドウ（プロジェクト共通）または `MenuLayoutData.RunAfterPlugins`（コンポーネント個別）で追加制御できます。
 
 ### 超過メニューの自処理
 VRChatの仕様上、1つの階層に定義できるアイテムの最大数は8つまでに制限されています。
-本ツールのエディターではこれを自由に超えてアイテムを放り込むことができますが、保存した際やビルド時において、8つを超過したアイテムは自動的に子フォルダへと押し出されます。
+本ツールのエディターではこれを自由に超えてアイテムを放り込むことができますが、保存した際やビルド時において、8つを超過したアイテムは自動的に `…(More)` 子フォルダへと押し出されます。保存時は More フォルダをフラットに解体した状態で保存し、ビルド時に再生成します。
 
 ---
 
@@ -72,19 +70,21 @@ VRChatの仕様上、1つの階層に定義できるアイテムの最大数は8
 1. VRC Avatar Descriptor
    ├── VRCExpressionsMenu
    ├── ModularAvatarMenuInstaller
+   ├── MenuManagerItemProxy        ← プロキシ（ビルド時動的生成アイテム用）
    └── MenuLayoutData
-           └── ItemLayout [ "Key", "ParentPath", "Order" ... ]
+           ├── BaseLayout  ──→ MenuLayoutDataAsset (ScriptableObject)
+           └── ExtendedLayout ─→ MenuLayoutDataAsset (ScriptableObject) [Pro]
+                                       └── ItemLayout [ SourceObjId, Key, Type, ParentPath, Order ... ]
 
        ↓ ↓ ↓ (ビルド実行 / プレイモード開始) ↓ ↓ ↓
 
 [ NDMFビルドプロセス ]
-2. Transforming Phase
-   MA がすべての MenuInstaller をマージし、巨大な1つの VRCExpressionsMenu を生成する。
-   (※この時点ではMAが追加した順の自動配置)
+2. Transforming Phase (Modular Avatar)
+   MA がすべての MenuInstaller をマージし、1つの VRCExpressionsMenu を生成する。
 
-3. Optimizing Phase
+3. Transforming Phase (MenuManagerPlugin, AfterMA)
    MenuManagerPlugin.cs が起動。
-   MenuLayoutData を読み取り、巨大な VRCExpressionsMenu の中の Control を取得。
-   Order と ParentPath の定義通りに、上限を維持してフォルダを再構築する。
-
+   MenuLayoutData を読み取り、VRCExpressionsMenu の Control を IDマッチングで特定。
+   Order と ParentPath の定義通りに上限を維持してフォルダを再構築する。
+   MenuManagerItemProxy / LilyCalInventory 由来アイテムも同パイプラインで処理。
 ```

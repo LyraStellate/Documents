@@ -1,4 +1,4 @@
-# ManuManagerItemProxy
+# MenuManagerItemProxy
 
 ## 概要
 

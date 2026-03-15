@@ -265,31 +265,27 @@ body {
 .vp-doc h2 {
     border-top: none !important;
     /* デフォルトの上部の線を削除 */
-    border-bottom: 3px solid var(--vp-c-brand-2) !important;
-    padding-bottom: 0.5rem;
-    position: relative;
-    margin-top: 3rem;
-}
-
-.vp-doc h3 {
     border-left: 6px solid var(--vp-c-brand-3) !important;
+    border-bottom: none !important;
     background-color: var(--vp-c-brand-soft);
     padding: 0.5rem 1rem;
     border-radius: 0 12px 12px 0;
-    margin-top: 2.5rem;
-    display: inline-block;
-    /* リボンっぽく文字幅に合わせる */
+    margin-top: 3rem;
     width: 100%;
 }
 
-/* h3ホバー時に左に出る # (アンカー) の位置とサイズ補正 */
-.vp-doc h3 .header-anchor {
+/* h2ホバー時に左に出る # (アンカー) の位置とサイズ補正 */
+.vp-doc h2 .header-anchor {
     top: 50%;
     transform: translateY(-50%);
     left: -12px;
-    /* 枠線のさらに外側へ逃がす */
     font-size: 0.9em;
-    /* 少し小さめにしてリボンレイアウトと馴染ませる */
+}
+
+.vp-doc h3 {
+    border-bottom: 3px solid var(--vp-c-brand-2) !important;
+    padding-bottom: 0.4rem;
+    margin-top: 2.5rem;
 }
 
 /* ==========================================================================

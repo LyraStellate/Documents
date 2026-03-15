@@ -1,8 +1,20 @@
 # MenuManager.cs
 
 ## 概要
-本ツールの中核となるエディター拡張スクリプトです。
-VRChatのラジアルメニューをUnityエディターのインスペクター上で再現し、直感的な操作でメニュー階層を編集するインターフェースを提供します。
+本ツールの中核となるエディター拡張スクリプトです。VRChatのラジアルメニューをUnityエディター上で再現し、直感的な操作でメニュー階層を編集するインターフェースを提供します。
+
+実装は責務ごとに複数のファイルへ partial class として分割されています。
+
+| ファイル | 役割 |
+|---|---|
+| `MenuManager.cs` | ウィンドウ本体・状態管理・エントリーポイント |
+| `MenuManager.DrawUI.cs` | 描画処理全般（ラジアルUI・ツールバー・詳細パネル） |
+| `MenuManager.TreeBuilder.cs` | メニューツリーの構築・レイアウト復元 |
+| `MenuManager.Serialization.cs` | レイアウト保存・シリアライズ |
+| `MenuManager.InputHandler.cs` | クリック・ドラッグ・ドロップ・リネーム入力処理 |
+| `MenuManager.Operations.cs` | ナビゲーション・並び替え・フォルダ作成などの操作 |
+| `MenuManager.Inventory.cs` | インベントリパネル描画・ドラッグ操作 |
+| `MenuManager.Helpers.cs` | 幾何計算・アイコンキャッシュ・ユーティリティ |
 
 ## 主な役割と機能
 - **レイアウトの描画**
