@@ -18,32 +18,20 @@ export default {
             window.addEventListener('click', (e: MouseEvent) => {
                 const link = (e.target as HTMLElement).closest('a')
                 if (link && link.hash && link.origin === window.location.origin && link.pathname === window.location.pathname) {
-                    // DOMのscrollBehaviorを書き換え
                     document.documentElement.style.scrollBehavior = 'smooth'
-                    // アニメーション完了想定時間後に元に戻す (VitePressの追従スクリプトとの競合を避けるため)
                     setTimeout(() => {
                         document.documentElement.style.scrollBehavior = ''
                     }, 1200)
                 }
             })
-
-            // ページ下部フェードオーバーレイ
-            const fadeOverlay = document.createElement('div')
-            fadeOverlay.classList.add('scroll-fade-bottom')
-            document.body.appendChild(fadeOverlay)
-
-            const updateFade = () => {
-                const atBottom = window.scrollY + window.innerHeight >= document.body.scrollHeight - 40
-                fadeOverlay.classList.toggle('hidden', atBottom)
-            }
-            window.addEventListener('scroll', updateFade, { passive: true })
-            updateFade()
         }
+
+        let scrollRevealObserver: IntersectionObserver | null = null
 
         watch(() => route.path, () => {
             if (typeof document === 'undefined') return
             nextTick(() => {
-                // コンテンツ部分のみをアニメーションさせる（SidebarやTOCのfixed配置を壊さないため .vp-doc を狙う）
+                // ページ遷移フェードイン
                 const content = document.querySelector('.vp-doc') || document.querySelector('.VPContent')
                 if (content) {
                     content.classList.remove('page-fade-in')
@@ -51,10 +39,34 @@ export default {
                     content.classList.add('page-fade-in')
                 }
 
-                // ページ遷移時にフェードオーバーレイをリセット
-                const overlay = document.querySelector('.scroll-fade-bottom')
-                if (overlay) overlay.classList.remove('hidden')
+                // scroll-reveal: 前回のオブザーバーを破棄して再構築
+                if (scrollRevealObserver) {
+                    scrollRevealObserver.disconnect()
+                    scrollRevealObserver = null
+                }
+
+                const doc = document.querySelector('.vp-doc')
+                if (!doc) return
+
+                scrollRevealObserver = new IntersectionObserver(
+                    (entries) => {
+                        entries.forEach(entry => {
+                            if (entry.isIntersecting) {
+                                entry.target.classList.add('fade-in-visible')
+                                scrollRevealObserver?.unobserve(entry.target)
+                            }
+                        })
+                    },
+                    { threshold: 0.1, rootMargin: '0px 0px -20px 0px' }
+                )
+
+                const targets = doc.querySelectorAll('h2, h3, p, table, pre, blockquote, .custom-block, img, ul, ol')
+                targets.forEach(el => {
+                    el.classList.remove('fade-in-visible')
+                    el.classList.add('fade-in-element')
+                    scrollRevealObserver!.observe(el)
+                })
             })
-        }, { immediate: true }) // 初回レンダー時にも適用
+        }, { immediate: true })
     }
 }
