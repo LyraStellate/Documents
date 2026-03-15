@@ -28,7 +28,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [1.0.0] - 2026-03-13
 
 ### Added
-- 正式リリース
+- 正式リリース。VPMパッケージ（`dev.lyrastellate.menu-manager`）として配布開始
+- 対応Unity: 2022.3 以降
+- 依存パッケージ: VRChat Avatars SDK `>=3.7.0`、NDMF `>=1.5.0 <2.0.0`、Modular Avatar `>=1.10.0 <2.0.0`
 
 ## [0.8.6] - 2026-03-07
 
@@ -68,11 +70,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [0.7.0] - 2026-03-05
 
 ### Changed
-- 大規模なリファクタリングを実施
-- 編集やビルド時のメニュー管理をIDベースに変更
+- 大規模なリファクタリングを実施。`MenuManager.cs` を責務ごとに partial class として分割
+  （`TreeBuilder` / `DrawUI` / `InputHandler` / `Operations` / `Serialization` / `Inventory` / `Helpers`）
+- 編集やビルド時のメニュー管理をIDベースに変更。`MenuEntry` に `PersistentId`（保存される GUID）と `UniqueId`（セッション内一時ID）を導入し、ビルド時のコントロールマッチングを文字列名依存から解放
 
 ### Fixed
-- メニューの名称変更や同一メニュー存在時による内部メニュー溢れを修正
+- メニューの名称変更や同名アイテムが複数存在する場合に内部メニューが溢れる問題を修正
 
 ## [0.6.3] - 2026-03-04
 
@@ -123,8 +126,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [0.3.0] - 2026-03-01
 
 ### Added
-- メニューのリセット機能
-- アイコン設定機能
+- メニューのリセット機能（レイアウトを破棄して元のメニュー構造に戻す）
+- アイコン設定機能（スロット詳細パネルから各メニューアイテムにカスタムアイコンを設定可能。設定したアイコンはビルド時の `VRCExpressionsMenu` にも反映される）
 - フォルダ用アイコン (`folder.png`) を追加
 - ビルド時間用アイコン (`upload.png`) を追加
 - 超過フォルダ用アイコン (`overflow.png`) を追加
@@ -148,3 +151,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 - αリリース
+- `VRCExpressionsMenu` をラジアルUI（スライス描画）で視覚化するエディターウィンドウ（`MenuManager.cs`）
+- `ModularAvatarMenuInstaller` の `installPath` を解析し、アバター内の分散したMAメニューを仮想統合ツリーとして表示
+- VRChat仕様に沿った8アイテム超過時の自動超過フォルダ生成とエミュレート
+- メニュー配置情報を `MenuLayoutData` コンポーネントに保存し、NDMFビルド時に自動適用

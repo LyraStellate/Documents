@@ -7,7 +7,8 @@
       "Bash(git -C \"/d/Unity/Project/Avatar_03_U2022/Assets/Lyra/EditorTools/MenuManager\" show --stat a8a52d7 3aad62b 928cf61 1dea244 eb6a24a 9b42cf8 6511727 655c164 3003b3b 1bfbc86 745bb2e 91889c5 110f690 e0fcb10 d4810ef 72e7a5b)",
       "Bash(find D:/Projects/github.com/LyraStellate/Documents/MenuManager/docs/guide -type f -name *.md)",
       "Read(//d/Unity/Project/Avatar_03_U2022/Assets/Lyra/EditorTools/MenuManager/Scripts/Editor/**)",
-      "Read(//d/Unity/Project/Avatar_03_U2022/Assets/Lyra/EditorTools/MenuManager/Scripts/**)"
+      "Read(//d/Unity/Project/Avatar_03_U2022/Assets/Lyra/EditorTools/MenuManager/Scripts/**)",
+      "Read(//d/Unity/Project/Avatar_03_U2022/**)"
     ]
   }
 }
