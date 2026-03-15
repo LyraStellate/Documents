@@ -26,6 +26,18 @@ export default {
                     }, 1200)
                 }
             })
+
+            // ページ下部フェードオーバーレイ
+            const fadeOverlay = document.createElement('div')
+            fadeOverlay.classList.add('scroll-fade-bottom')
+            document.body.appendChild(fadeOverlay)
+
+            const updateFade = () => {
+                const atBottom = window.scrollY + window.innerHeight >= document.body.scrollHeight - 40
+                fadeOverlay.classList.toggle('hidden', atBottom)
+            }
+            window.addEventListener('scroll', updateFade, { passive: true })
+            updateFade()
         }
 
         watch(() => route.path, () => {
@@ -38,6 +50,10 @@ export default {
                     void (content as HTMLElement).offsetWidth
                     content.classList.add('page-fade-in')
                 }
+
+                // ページ遷移時にフェードオーバーレイをリセット
+                const overlay = document.querySelector('.scroll-fade-bottom')
+                if (overlay) overlay.classList.remove('hidden')
             })
         }, { immediate: true }) // 初回レンダー時にも適用
     }

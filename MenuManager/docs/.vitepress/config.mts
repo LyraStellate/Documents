@@ -42,7 +42,8 @@ export default defineConfig({
                             { text: 'MenuManager.cs', link: '/guide/technical-details/MenuManager' },
                             { text: 'MenuManagerPlugin.cs', link: '/guide/technical-details/MenuManagerPlugin' },
                             { text: 'MenuLayoutData.cs', link: '/guide/technical-details/MenuLayoutData' },
-                            { text: 'MenuLayoutDataEditor.cs', link: '/guide/technical-details/MenuLayoutDataEditor' },
+                            { text: 'MenuManagerTypes.cs', link: '/guide/technical-details/MenuManagerTypes' },
+                            { text: 'MenuManagerDataManager.cs', link: '/guide/technical-details/MenuManagerDataManager' },
                             { text: 'MenuManagerSettingsWindow.cs', link: '/guide/technical-details/MenuManagerSettingsWindow' }
                         ]
                     },

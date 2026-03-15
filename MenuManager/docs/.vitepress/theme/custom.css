@@ -301,3 +301,23 @@ body {
  * スムーススクロールと目次追従用
  * ========================================================================== */
 /* VitePressの専用追従スクリプトやSticky要素と衝突するため、ここでは設定せずJavaScriptで動的に制御します */
+
+/* ==========================================================================
+ * ページ下部フェードオーバーレイ
+ * ========================================================================== */
+.scroll-fade-bottom {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 120px;
+    background: linear-gradient(to bottom, transparent, var(--vp-c-bg));
+    pointer-events: none;
+    z-index: 10;
+    opacity: 1;
+    transition: opacity 0.4s ease;
+}
+
+.scroll-fade-bottom.hidden {
+    opacity: 0;
+}
